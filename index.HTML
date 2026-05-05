@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediCore — Hospital Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="HM.CSS">
+<script src="HM.js"></script>
+</head>
+<body>
+
+<!-- ============ LOGIN SCREEN ============ -->
+<div id="login-screen">
+  <div class="login-left">
+    <div class="login-grid-bg"></div>
+    <div class="login-brand">
+      <div class="logo-mark">🏥</div>
+      <h1>MediCore</h1>
+      <p>Comprehensive hospital management — built for speed, precision, and patient care.</p>
+      <div class="login-stats">
+        <div class="login-stat"><div class="val">1,284</div><div class="lbl">Patients</div></div>
+        <div class="login-stat"><div class="val">48</div><div class="lbl">Doctors</div></div>
+        <div class="login-stat"><div class="val">250</div><div class="lbl">Beds</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="login-right">
+    <div class="login-box">
+      <h2>Welcome back</h2>
+      <p class="sub">Sign in to continue to MediCore HMS</p>
+
+      <div class="role-tabs">
+        <div class="role-tab active" onclick="switchRole('admin')">
+          <span class="tab-icon">🔐</span>Admin Portal
+        </div>
+        <div class="role-tab" onclick="switchRole('patient')">
+          <span class="tab-icon">👤</span>Patient Portal
+        </div>
+      </div>
+
+      <div class="login-hint" id="login-hint">
+        <strong>Admin demo:</strong> Username — <code>admin</code> &nbsp;|&nbsp; Password — <code>admin123</code>
+      </div>
+
+      <div class="login-error" id="login-error">⚠️ Invalid credentials. Please try again.</div>
+
+      <div class="form-group">
+        <label class="form-label" id="username-label">Username</label>
+        <input class="form-control" id="login-username" type="text" placeholder="Enter username" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div style="position:relative;">
+          <input class="form-control" id="login-password" type="password" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
+          <span onclick="togglePwd()" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;color:var(--muted);" id="eye-icon">👁</span>
+        </div>
+      </div>
+
+      <button class="btn-login" onclick="doLogin()">Sign In →</button>
+
+      <div class="login-footer">
+        MediCore HMS v2.0 &nbsp;·&nbsp; Secure Login &nbsp;·&nbsp; © 2026
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app">
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <span>MediCore</span>
+    <small>Hospital Management</small>
+  </div>
+
+  <!-- Admin nav -->
+  <div id="admin-nav">
+    <div class="nav-section-label">Core</div>
+    <div class="nav-item active" onclick="navigate('dashboard', this)"><span class="icon">🏥</span> Dashboard</div>
+    <div class="nav-item" onclick="navigate('patients', this)"><span class="icon">👥</span> Patients</div>
+    <div class="nav-item" onclick="navigate('doctors', this)"><span class="icon">🩺</span> Doctors</div>
+    <div class="nav-item" onclick="navigate('appointments', this)"><span class="icon">📅</span> Appointments</div>
+    <div class="nav-section-label">Operations</div>
+    <div class="nav-item" onclick="navigate('wards', this)"><span class="icon">🛏</span> Wards & Beds</div>
+    <div class="nav-item" onclick="navigate('pharmacy', this)"><span class="icon">💊</span> Pharmacy</div>
+    <div class="nav-item" onclick="navigate('billing', this)"><span class="icon">💳</span> Billing</div>
+    <div class="nav-item" onclick="navigate('reports', this)"><span class="icon">📊</span> Reports</div>
+  </div>
+
+  <!-- Patient nav -->
+  <div id="patient-nav" style="display:none;">
+    <div class="nav-section-label">My Portal</div>
+    <div class="nav-item active" onclick="navigate('portal', this)"><span class="icon">🏠</span> My Dashboard</div>
+    <div class="nav-item" onclick="navigate('my-appointments', this)"><span class="icon">📅</span> My Appointments</div>
+    <div class="nav-item" onclick="navigate('my-bills', this)"><span class="icon">💳</span> My Bills</div>
+    <div class="nav-item" onclick="navigate('doctors', this)"><span class="icon">🩺</span> Find Doctors</div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="user-pill">
+      <div class="user-avatar" id="sidebar-avatar">AD</div>
+      <div class="user-info">
+        <p id="sidebar-name">Admin User</p>
+        <small id="sidebar-role">System Administrator</small>
+      </div>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">⬡ Sign Out</button>
+  </div>
+</nav>
+
+<div id="main">
+  <header class="topbar">
+    <div class="topbar-title" id="page-title">Dashboard</div>
+    <div class="topbar-search">
+      <span>🔍</span>
+      <input type="text" placeholder="Search patients, doctors...">
+    </div>
+    <span class="role-pill admin" id="topbar-role-pill">Admin</span>
+    <button class="btn btn-primary" id="add-btn" onclick="handleAdd()">+ Add New</button>
+  </header>
+
+  <div class="content">
+
+    <!-- DASHBOARD (Admin) -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon" style="background:#e8f0fd;">👥</div><div class="stat-value">1,284</div><div class="stat-label">Total Patients</div><div class="stat-change up">↑ 12% this month</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#e0f9f1;">🩺</div><div class="stat-value">48</div><div class="stat-label">Active Doctors</div><div class="stat-change up">↑ 3 new this week</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#fff3e0;">📅</div><div class="stat-value">127</div><div class="stat-label">Today's Appointments</div><div class="stat-change down">↓ 5 cancelled</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#fdeaea;">🛏</div><div class="stat-value">84%</div><div class="stat-label">Bed Occupancy</div><div class="stat-change up">210/250 beds</div></div>
+      </div>
+      <div class="quick-actions">
+        <div class="qa-card" onclick="navigate('patients', document.querySelector('#admin-nav [onclick*=patients]'))"><div class="qa-icon">👤</div><div class="qa-label">New Patient</div><div class="qa-sub">Register patient</div></div>
+        <div class="qa-card" onclick="navigate('appointments', document.querySelector('#admin-nav [onclick*=appointments]'))"><div class="qa-icon">📋</div><div class="qa-label">Book Appointment</div><div class="qa-sub">Schedule visit</div></div>
+        <div class="qa-card" onclick="navigate('pharmacy', document.querySelector('#admin-nav [onclick*=pharmacy]'))"><div class="qa-icon">💊</div><div class="qa-label">Prescribe Medicine</div><div class="qa-sub">Pharmacy order</div></div>
+        <div class="qa-card" onclick="navigate('billing', document.querySelector('#admin-nav [onclick*=billing]'))"><div class="qa-icon">🧾</div><div class="qa-label">Generate Bill</div><div class="qa-sub">Create invoice</div></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header"><h3>Recent Appointments</h3><button class="btn btn-ghost" onclick="navigate('appointments', document.querySelector('#admin-nav [onclick*=appointments]'))">View All</button></div>
+          <div class="card-body"><table class="table"><thead><tr><th>Patient</th><th>Doctor</th><th>Dept.</th><th>Time</th><th>Status</th></tr></thead><tbody id="dash-appt-table"></tbody></table></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:18px;">
+          <div class="card"><div class="card-header"><h3>Department Load</h3></div><div class="card-body" style="padding:16px 20px;"><div id="dept-load"></div></div></div>
+          <div class="card"><div class="card-header"><h3>Alerts</h3></div><div class="card-body" style="padding:14px 18px;" id="alerts-list"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PATIENT PORTAL DASHBOARD -->
+    <div class="page" id="page-portal">
+      <div class="portal-hero">
+        <div>
+          <h2 id="portal-greeting">Good morning, Patient</h2>
+          <p>Here's an overview of your health records at MediCore.</p>
+          <span class="portal-id" id="portal-pid">Patient ID: —</span>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon" style="background:#e8f0fd;">📅</div><div class="stat-value" id="pt-appt-count">2</div><div class="stat-label">Upcoming Appointments</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#e0f9f1;">🩺</div><div class="stat-value" id="pt-doctor">Dr. —</div><div class="stat-label">Assigned Doctor</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#fff3e0;">🏥</div><div class="stat-value" id="pt-ward">—</div><div class="stat-label">Ward / Status</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#fdeaea;">💳</div><div class="stat-value" id="pt-bill-count">0</div><div class="stat-label">Pending Bills</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><h3>My Upcoming Appointments</h3></div>
+          <div class="card-body"><table class="table"><thead><tr><th>Doctor</th><th>Department</th><th>Date</th><th>Time</th><th>Status</th></tr></thead><tbody id="portal-appt-tbody"></tbody></table></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>My Profile</h3></div>
+          <div class="card-body" style="padding:0 20px;" id="portal-profile"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PATIENTS -->
+    <div class="page" id="page-patients">
+      <div class="card">
+        <div class="card-header"><h3>Patient Registry</h3>
+          <div class="flex gap-8">
+            <input type="text" class="form-control-inner" placeholder="Search patients..." style="width:220px;" oninput="filterTable('patients-table', this.value)">
+            <button class="btn btn-primary" onclick="openModal('patient')">+ Register Patient</button>
+          </div>
+        </div>
+        <div class="card-body"><table class="table" id="patients-table"><thead><tr><th>ID</th><th>Name</th><th>Age</th><th>Blood</th><th>Contact</th><th>Doctor</th><th>Status</th><th>Action</th></tr></thead><tbody id="patients-tbody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- DOCTORS -->
+    <div class="page" id="page-doctors">
+      <div class="flex gap-8 mb-20" style="justify-content:space-between;align-items:center;"><div></div><button class="btn btn-primary" id="add-doctor-btn" onclick="openModal('doctor')">+ Add Doctor</button></div>
+      <div class="grid-3" id="doctors-grid"></div>
+    </div>
+
+    <!-- APPOINTMENTS -->
+    <div class="page" id="page-appointments">
+      <div class="card">
+        <div class="card-header"><h3>Appointment Schedule</h3>
+          <div class="flex gap-8">
+            <input type="date" class="form-control-inner" style="width:180px;" id="appt-date-filter" onchange="renderAppointments()">
+            <button class="btn btn-primary" onclick="openModal('appointment')">+ Book Appointment</button>
+          </div>
+        </div>
+        <div class="card-body"><table class="table"><thead><tr><th>Patient</th><th>Doctor</th><th>Department</th><th>Date</th><th>Time</th><th>Type</th><th>Status</th><th>Action</th></tr></thead><tbody id="appointments-tbody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- MY APPOINTMENTS (Patient) -->
+    <div class="page" id="page-my-appointments">
+      <div class="card">
+        <div class="card-header"><h3>My Appointments</h3><button class="btn btn-primary" onclick="openModal('appointment')">+ Book New</button></div>
+        <div class="card-body"><table class="table"><thead><tr><th>Doctor</th><th>Department</th><th>Date</th><th>Time</th><th>Type</th><th>Status</th></tr></thead><tbody id="my-appointments-tbody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- MY BILLS (Patient) -->
+    <div class="page" id="page-my-bills">
+      <div class="card">
+        <div class="card-header"><h3>My Billing History</h3></div>
+        <div class="card-body"><table class="table"><thead><tr><th>Bill ID</th><th>Services</th><th>Amount</th><th>Date</th><th>Payment</th><th>Status</th></tr></thead><tbody id="my-bills-tbody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- WARDS -->
+    <div class="page" id="page-wards">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon" style="background:#e8f0fd;">🏨</div><div class="stat-value">8</div><div class="stat-label">Total Wards</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#e0f9f1;">✅</div><div class="stat-value">40</div><div class="stat-label">Available Beds</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#fdeaea;">🛏</div><div class="stat-value">210</div><div class="stat-label">Occupied Beds</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#fff3e0;">🔧</div><div class="stat-value">5</div><div class="stat-label">Under Maintenance</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card"><div class="card-header"><h3>Ward Overview</h3></div><div class="card-body"><table class="table"><thead><tr><th>Ward</th><th>Type</th><th>Total</th><th>Occupied</th><th>Available</th><th>Status</th></tr></thead><tbody id="wards-tbody"></tbody></table></div></div>
+        <div class="card"><div class="card-header"><h3>Current Admissions</h3></div><div class="card-body"><table class="table"><thead><tr><th>Patient</th><th>Ward</th><th>Bed</th><th>Admitted</th><th>Action</th></tr></thead><tbody id="admissions-tbody"></tbody></table></div></div>
+      </div>
+    </div>
+
+    <!-- PHARMACY -->
+    <div class="page" id="page-pharmacy">
+      <div class="card mb-20">
+        <div class="card-header"><h3>Medicine Inventory</h3>
+          <div class="flex gap-8">
+            <input type="text" class="form-control-inner" placeholder="Search medicines..." style="width:200px;" oninput="filterTable('pharmacy-table', this.value)">
+            <button class="btn btn-primary" id="add-medicine-btn" onclick="openModal('medicine')">+ Add Medicine</button>
+          </div>
+        </div>
+        <div class="card-body"><table class="table" id="pharmacy-table"><thead><tr><th>Name</th><th>Category</th><th>Stock</th><th>Unit Price</th><th>Expiry</th><th>Status</th></tr></thead><tbody id="pharmacy-tbody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- BILLING -->
+    <div class="page" id="page-billing">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon" style="background:#e0f9f1;">💰</div><div class="stat-value">₹4.2L</div><div class="stat-label">Today's Revenue</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#e8f0fd;">🧾</div><div class="stat-value">89</div><div class="stat-label">Bills Generated</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#fdeaea;">⏳</div><div class="stat-value">24</div><div class="stat-label">Pending Payments</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#fff3e0;">📊</div><div class="stat-value">₹28.6L</div><div class="stat-label">Monthly Revenue</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Billing Records</h3><button class="btn btn-primary" onclick="openModal('bill')">+ Create Bill</button></div>
+        <div class="card-body"><table class="table"><thead><tr><th>Bill ID</th><th>Patient</th><th>Services</th><th>Amount</th><th>Date</th><th>Payment</th><th>Status</th><th>Action</th></tr></thead><tbody id="billing-tbody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="page" id="page-reports">
+      <div class="grid-2 mb-20">
+        <div class="card"><div class="card-header"><h3>Monthly Patient Statistics</h3></div><div class="card-body" style="padding:20px;"><div id="monthly-stats"></div></div></div>
+        <div class="card"><div class="card-header"><h3>Revenue Breakdown</h3></div><div class="card-body" style="padding:20px;"><div id="revenue-breakdown"></div></div></div>
+      </div>
+      <div class="card"><div class="card-header"><h3>Performance Summary</h3></div><div class="card-body" style="padding:20px;"><div class="grid-3" id="perf-summary"></div></div></div>
+    </div>
+
+  </div>
+</div>
+</div><!-- end #app -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOnOverlay(event)">
+  <div class="modal" id="modal-box">
+    <div class="modal-header"><h3 id="modal-title">Add Record</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" id="modal-save-btn">Save</button></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+</body>
+</html>
